@@ -27,26 +27,38 @@ phases:
 
   pre_build:
     commands:
-      - echo "Starting PostgreSQL for the test suite..."
-      - docker run --rm --detach --name ci-postgres --publish ${POSTGRES_PORT}:5432 --env POSTGRES_DB=${POSTGRES_DB} --env POSTGRES_USER=${POSTGRES_USER} --env POSTGRES_PASSWORD=${POSTGRES_PASSWORD} postgres:17-alpine
-      - echo "Waiting for PostgreSQL to become ready..."
+      -- echo "Waiting for PostgreSQL to become ready..."
       - |
-        for attempt in $(seq 1 30); do
+        set -e
+        for attempt in $(seq 1 60); do
           if docker exec ci-postgres pg_isready -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" >/dev/null 2>&1; then
+            echo "PostgreSQL is ready."
             break
           fi
-          if [ "${attempt}" -eq 30 ]; then
+
+          if [ "${attempt}" -eq 60 ]; then
             echo "PostgreSQL did not become ready in time."
             docker logs ci-postgres
             exit 1
           fi
+
           sleep 2
         done
+
+      - echo "Verifying test database..."
+      - docker exec ci-postgres psql -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -c "SELECT current_database();"
+
+      - echo "Verifying DATABASE_URL..."
+      - echo "${DATABASE_URL}"
       - cd backend
       - echo "Running Ruff..."
       - ../.venv/bin/ruff check app tests
       - echo "Running mypy..."
       - ../.venv/bin/mypy app
+            - echo "Checking PostgreSQL container..."
+      - docker ps
+      - docker inspect ci-postgres --format "{{.State.Status}}"
+
       - echo "Running pytest..."
       - ../.venv/bin/pytest tests
       - cd ..
