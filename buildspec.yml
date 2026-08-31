@@ -29,7 +29,7 @@ phases:
     commands:
       - echo "Starting PostgreSQL for the test suite..."
       - docker rm -f ci-postgres 2>/dev/null || true
-      - docker run --rm --detach --name ci-postgres --publish 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres postgres:17-alpine
+      - docker run --rm --detach --name ci-postgres --publish 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres public.ecr.aws/docker/library/postgres:17-alpine
       - echo "Waiting for PostgreSQL to become ready..."
       - |
         for i in $(seq 1 40); do
