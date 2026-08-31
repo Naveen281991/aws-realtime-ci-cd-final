@@ -25,9 +25,12 @@ phases:
       - uv python install 3.14
       - uv sync --frozen --group dev
 
-  pre_build:
+    pre_build:
     commands:
-      -- echo "Waiting for PostgreSQL to become ready..."
+      - echo "Starting PostgreSQL for the test suite..."
+      - docker run --rm --detach --name ci-postgres --publish ${POSTGRES_PORT}:5432 --env POSTGRES_DB=${POSTGRES_DB} --env POSTGRES_USER=${POSTGRES_USER} --env POSTGRES_PASSWORD=${POSTGRES_PASSWORD} postgres:17-alpine
+
+      - echo "Waiting for PostgreSQL to become ready..."
       - |
         set -e
         for attempt in $(seq 1 60); do
@@ -50,25 +53,30 @@ phases:
 
       - echo "Verifying DATABASE_URL..."
       - echo "${DATABASE_URL}"
+
       - cd backend
+
       - echo "Running Ruff..."
       - ../.venv/bin/ruff check app tests
+
       - echo "Running mypy..."
       - ../.venv/bin/mypy app
-            - echo "Checking PostgreSQL container..."
+
+      - echo "Checking PostgreSQL container..."
       - docker ps
       - docker inspect ci-postgres --format "{{.State.Status}}"
 
       - echo "Running pytest..."
       - ../.venv/bin/pytest tests
+
       - cd ..
+
       - echo "Logging in to Amazon ECR..."
       - export AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
       - export ECR_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPOSITORY}"
       - export IMAGE_TAG="${CODEBUILD_RESOLVED_SOURCE_VERSION}"
       - test -n "${IMAGE_TAG}" || (echo "CODEBUILD_RESOLVED_SOURCE_VERSION is empty." && exit 1)
       - aws ecr get-login-password --region "${AWS_DEFAULT_REGION}" | docker login --username AWS --password-stdin "${ECR_URI}"
-
   build:
     commands:
       - echo "Building the FastAPI full-stack Docker image..."
