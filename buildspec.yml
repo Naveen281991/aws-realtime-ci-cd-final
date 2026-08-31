@@ -1,0 +1,226 @@
+version: 0.2
+
+env:
+  variables:
+    ECR_REPOSITORY: "aws-enterprise-cicd-app"
+    CONTAINER_NAME: "aws-enterprise-cicd-app"
+    POSTGRES_DB: "app_test"
+    POSTGRES_USER: "postgres"
+    POSTGRES_PASSWORD: "postgres"
+    POSTGRES_PORT: "5432"
+    DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/app_test"
+    SECRET_KEY: "ci-only-secret-key"
+    PROJECT_NAME: "FastAPI CI Test"
+    FIRST_SUPERUSER: "admin@example.com"
+    FIRST_SUPERUSER_PASSWORD: "ci-only-superuser-password"
+    EMAIL_TEST_USER: "test@example.com"
+    FASTAPI_ENV: "development"
+
+phases:
+  install:
+    commands:
+      - echo "Installing uv and Python 3.14..."
+      - curl -LsSf https://astral.sh/uv/install.sh | sh
+      - export PATH="${HOME}/.local/bin:${PATH}"
+      - uv python install 3.14
+      - uv sync --frozen --group dev
+
+  pre_build:
+    commands:
+      - echo "Starting PostgreSQL for the test suite..."
+      - docker run --rm --detach --name ci-postgres --publish ${POSTGRES_PORT}:5432 --env POSTGRES_DB=${POSTGRES_DB} --env POSTGRES_USER=${POSTGRES_USER} --env POSTGRES_PASSWORD=${POSTGRES_PASSWORD} postgres:17-alpine
+      - echo "Waiting for PostgreSQL to become ready..."
+      - |
+        for attempt in $(seq 1 30); do
+          if docker exec ci-postgres pg_isready -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" >/dev/null 2>&1; then
+            break
+          fi
+          if [ "${attempt}" -eq 30 ]; then
+            echo "PostgreSQL did not become ready in time."
+            docker logs ci-postgres
+            exit 1
+          fi
+          sleep 2
+        done
+      - cd backend
+      - echo "Running Ruff..."
+      - ../.venv/bin/ruff check app tests
+      - echo "Running mypy..."
+      - ../.venv/bin/mypy app
+      - echo "Running pytest..."
+      - ../.venv/bin/pytest tests
+      - cd ..
+      - echo "Logging in to Amazon ECR..."
+      - export AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
+      - export ECR_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPOSITORY}"
+      - export IMAGE_TAG="${CODEBUILD_RESOLVED_SOURCE_VERSION}"
+      - test -n "${IMAGE_TAG}" || (echo "CODEBUILD_RESOLVED_SOURCE_VERSION is empty." && exit 1)
+      - aws ecr get-login-password --region "${AWS_DEFAULT_REGION}" | docker login --username AWS --password-stdin "${ECR_URI}"
+
+  build:
+    commands:
+      - echo "Building the FastAPI full-stack Docker image..."
+      - export DOCKER_BUILDKIT=1
+      - docker build --tag "${ECR_URI}:${IMAGE_TAG}" --tag "${ECR_URI}:latest" .
+
+  post_build:
+    commands:
+      - echo "Stopping the PostgreSQL test container..."
+      - docker rm --force ci-postgres >/dev/null 2>&1 || true
+      - echo "Pushing the immutable application image..."
+      - docker push "${ECR_URI}:${IMAGE_TAG}"
+      - echo "Updating the bootstrap latest image..."
+      - docker push "${ECR_URI}:latest"
+      - echo "Synchronizing the FastAPI DATABASE_URL from the RDS-managed master secret..."
+      - |
+        python - <<'PY'
+        import json
+        import os
+        import subprocess
+        import urllib.parse
+
+        secret = subprocess.check_output(
+            [
+                "aws", "secretsmanager", "get-secret-value",
+                "--secret-id", os.environ["RDS_MASTER_SECRET_ARN"],
+                "--query", "SecretString",
+                "--output", "text",
+            ],
+            text=True,
+        )
+        master = json.loads(secret)
+        password = urllib.parse.quote(master["password"], safe="")
+        username = urllib.parse.quote(master["username"], safe="")
+        database_url = (
+            f"postgresql://{username}:{password}@"
+            f"{os.environ['POSTGRES_SERVER']}:{os.environ['POSTGRES_PORT']}/"
+            f"{os.environ['POSTGRES_DB']}"
+        )
+
+        subprocess.run(
+            [
+                "aws", "secretsmanager", "put-secret-value",
+                "--secret-id", os.environ["DATABASE_URL_SECRET_ARN"],
+                "--secret-string", database_url,
+            ],
+            check=True,
+        )
+        PY
+      - echo "Registering the migration task definition for the exact image..."
+      - |
+        python - <<'PY'
+        import json
+        import os
+        import subprocess
+
+        image = f"{os.environ['ECR_REPOSITORY_URI']}:{os.environ['IMAGE_TAG']}"
+        container = {
+            "name": os.environ["CONTAINER_NAME"],
+            "image": image,
+            "essential": True,
+            "command": [
+                "/bin/sh",
+                "-c",
+                "cd /app/backend && /app/.venv/bin/alembic upgrade head && /app/.venv/bin/python -m app.initial_data",
+            ],
+            "secrets": [
+                {"name": "SECRET_KEY", "valueFrom": os.environ["SECRET_KEY_ARN"]},
+                {"name": "DATABASE_URL", "valueFrom": os.environ["DATABASE_URL_SECRET_ARN"]},
+                {"name": "FIRST_SUPERUSER", "valueFrom": os.environ["FIRST_SUPERUSER_ARN"]},
+                {
+                    "name": "FIRST_SUPERUSER_PASSWORD",
+                    "valueFrom": os.environ["FIRST_SUPERUSER_PASSWORD_ARN"],
+                },
+            ],
+            "environment": [
+                {"name": "PROJECT_NAME", "value": "AWS Enterprise FastAPI"},
+                {"name": "FASTAPI_ENV", "value": "production"},
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/aws-enterprise-cicd-app",
+                    "awslogs-region": os.environ["AWS_DEFAULT_REGION"],
+                    "awslogs-stream-prefix": "migration",
+                },
+            },
+        }
+        arn = subprocess.check_output(
+            [
+                "aws", "ecs", "register-task-definition",
+                "--family", f"{os.environ['CONTAINER_NAME']}-migration",
+                "--network-mode", "awsvpc",
+                "--requires-compatibilities", "FARGATE",
+                "--cpu", "256",
+                "--memory", "512",
+                "--execution-role-arn", os.environ["ECS_TASK_EXECUTION_ROLE_ARN"],
+                "--container-definitions", json.dumps([container]),
+                "--query", "taskDefinition.taskDefinitionArn",
+                "--output", "text",
+            ],
+            text=True,
+        ).strip()
+
+        with open("migration-task-definition-arn.txt", "w", encoding="utf-8") as file:
+            file.write(arn)
+        PY
+      - echo "Running Alembic migrations and initial application data..."
+      - |
+        set -euo pipefail
+        migration_task_definition="$(cat migration-task-definition-arn.txt)"
+        migration_task_arn="$(aws ecs run-task \
+          --cluster "${ECS_CLUSTER}" \
+          --task-definition "${migration_task_definition}" \
+          --launch-type FARGATE \
+          --network-configuration "awsvpcConfiguration={subnets=[${ECS_SUBNET_A},${ECS_SUBNET_B}],securityGroups=[${ECS_SECURITY_GROUP_ID}],assignPublicIp=ENABLED}" \
+          --query "tasks[0].taskArn" \
+          --output text)"
+
+        if [ "${migration_task_arn}" = "None" ]; then
+          echo "ECS did not start the migration task."
+          exit 1
+        fi
+
+        for attempt in $(seq 1 60); do
+          status="$(aws ecs describe-tasks \
+            --cluster "${ECS_CLUSTER}" \
+            --tasks "${migration_task_arn}" \
+            --query "tasks[0].lastStatus" \
+            --output text)"
+
+          if [ "${status}" = "STOPPED" ]; then
+            exit_code="$(aws ecs describe-tasks \
+              --cluster "${ECS_CLUSTER}" \
+              --tasks "${migration_task_arn}" \
+              --query "tasks[0].containers[0].exitCode" \
+              --output text)"
+
+            echo "Migration task exit code: ${exit_code}"
+
+            if [ "${exit_code}" != "0" ]; then
+              echo "Production database migration failed."
+              exit 1
+            fi
+
+            break
+          fi
+
+          if [ "${attempt}" -eq 60 ]; then
+            echo "Migration task timed out."
+            exit 1
+          fi
+
+          sleep 10
+        done
+      - echo "Generating the ECS deployment artifact..."
+      - printf '[{"name":"%s","imageUri":"%s"}]' "${CONTAINER_NAME}" "${ECR_URI}:${IMAGE_TAG}" > imagedefinitions.json
+      - echo "FastAPI CI, migration, and deployment artifact completed successfully."
+
+artifacts:
+  files:
+    - imagedefinitions.json
+  discard-paths: yes
+
+cache:
+  paths:
+    - "/root/.cache/uv/**/*"
