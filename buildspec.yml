@@ -49,11 +49,34 @@ phases:
           || docker exec ci-postgres psql -U "${POSTGRES_USER}" -d postgres -c "CREATE DATABASE ${POSTGRES_DB};"
       - echo "Verifying test database exists..."
       - docker exec ci-postgres psql -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -c "SELECT current_database();"
+      - cd backend
+      - echo "Running Ruff..."
+      - ../.venv/bin/ruff check app tests
+      - echo "Running mypy..."
+      - ../.venv/bin/mypy app
+      - echo "Running pytest..."
+      - ../.venv/bin/pytest tests
+      - cd ..
+      - echo "Logging in to Amazon ECR..."
+      - export AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
+      - export ECR_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPOSITORY}"
+      - |
+        if [ -n "${CODEBUILD_RESOLVED_SOURCE_VERSION}" ]; then
+          export IMAGE_TAG="${CODEBUILD_RESOLVED_SOURCE_VERSION}"
+        else
+          export IMAGE_TAG="$(date +%Y%m%d%H%M%S)-$(echo ${CODEBUILD_BUILD_ID} | cut -d: -f2 | cut -c1-8)"
+        fi
+      - echo "ECR_URI=${ECR_URI}"
+      - echo "IMAGE_TAG=${IMAGE_TAG}"
+      - test -n "${IMAGE_TAG}" || (echo "IMAGE_TAG is empty" && exit 1)
+      - test -n "${ECR_URI}" || (echo "ECR_URI is empty" && exit 1)
+      - aws ecr get-login-password --region "${AWS_DEFAULT_REGION}" | docker login --username AWS --password-stdin "${ECR_URI}"
 
   build:
     commands:
       - echo "Building the FastAPI full-stack Docker image..."
       - export DOCKER_BUILDKIT=1
+      - echo "Using ECR_URI=${ECR_URI} IMAGE_TAG=${IMAGE_TAG}"
       - docker build --tag "${ECR_URI}:${IMAGE_TAG}" --tag "${ECR_URI}:latest" .
 
   post_build:
