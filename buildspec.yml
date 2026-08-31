@@ -28,11 +28,12 @@ phases:
   pre_build:
     commands:
       - echo "Starting PostgreSQL for the test suite..."
-      - docker run --rm --detach --name ci-postgres --publish ${POSTGRES_PORT}:5432 --env POSTGRES_USER=${POSTGRES_USER} --env POSTGRES_PASSWORD=${POSTGRES_PASSWORD} postgres:17-alpine
+      - docker rm -f ci-postgres 2>/dev/null || true
+      - docker run --rm --detach --name ci-postgres --publish 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres postgres:17-alpine
       - echo "Waiting for PostgreSQL to become ready..."
       - |
         for attempt in $(seq 1 40); do
-          if docker exec ci-postgres pg_isready -U "${POSTGRES_USER}" >/dev/null 2>&1; then
+          if docker exec ci-postgres pg_isready -U postgres >/dev/null 2>&1; then
             echo "PostgreSQL is ready."
             break
           fi
@@ -43,19 +44,19 @@ phases:
           fi
           sleep 2
         done
-      - echo "Creating test database if it does not exist..."
-      - |
-        docker exec ci-postgres psql -U "${POSTGRES_USER}" -d postgres -c "SELECT 1 FROM pg_database WHERE datname = '${POSTGRES_DB}'" | grep -q 1 \
-          || docker exec ci-postgres psql -U "${POSTGRES_USER}" -d postgres -c "CREATE DATABASE ${POSTGRES_DB};"
-      - echo "Verifying test database exists..."
-      - docker exec ci-postgres psql -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -c "SELECT current_database();"
+      - echo "Force creating test database..."
+      - docker exec ci-postgres psql -U postgres -d postgres -c "DROP DATABASE IF EXISTS app_test;"
+      - docker exec ci-postgres psql -U postgres -d postgres -c "CREATE DATABASE app_test;"
+      - echo "Verifying test database..."
+      - docker exec ci-postgres psql -U postgres -d app_test -c "SELECT current_database();"
+      - echo "DATABASE_URL is: ${DATABASE_URL}"
       - cd backend
       - echo "Running Ruff..."
       - ../.venv/bin/ruff check app tests
       - echo "Running mypy..."
       - ../.venv/bin/mypy app
       - echo "Running pytest..."
-      - ../.venv/bin/pytest tests
+      - ../.venv/bin/pytest tests -v
       - cd ..
       - echo "Logging in to Amazon ECR..."
       - export AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
