@@ -25,7 +25,7 @@ variable "github_connection_arn" {
   }
 }
 
-  variable "github_repository" {
+variable "github_repository" {
   description = "GitHub repository in owner/name format."
   type        = string
 
