@@ -9,7 +9,7 @@ environment = "dev"
 github_connection_arn = "arn:aws:codeconnections:us-east-1:407036964001:connection/a4ee57a9-6f18-4e0f-9c8c-637916578769"
 
 # Required: GitHub repository in owner/name format
-github_repository = "Naveen281991/aws-realtime-ci-cd"
+github_repository = "Naveen281991/aws-realtime-ci-cd-final"
 
 github_branch = "main"
 
