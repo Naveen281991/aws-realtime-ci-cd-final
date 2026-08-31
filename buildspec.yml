@@ -292,8 +292,7 @@ artifacts:
 cache:
   paths:
     - "/root/.cache/uv/**/*"
-```
-```yaml
+
 version: 0.2
 
 env:
