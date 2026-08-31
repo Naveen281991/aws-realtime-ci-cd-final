@@ -50,7 +50,11 @@ phases:
       - echo "Verifying test database..."
       - docker exec ci-postgres psql -U postgres -d app_test -c "SELECT current_database();"
       - echo "DATABASE_URL is ${DATABASE_URL}"
-      - cd backend
+            - cd backend
+      - echo "Running database migrations..."
+      - ../.venv/bin/alembic upgrade head
+      - echo "Verifying migrated tables..."
+      - docker exec ci-postgres psql -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -c '\dt'
       - echo "Running Ruff..."
       - ../.venv/bin/ruff check app tests
       - echo "Running mypy..."
