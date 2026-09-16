@@ -1,40 +1,43 @@
+# infrastructure/terraform/secrets.tf
+
 resource "aws_secretsmanager_secret" "secret_key" {
-  name                    = "aws-enterprise-cicd/app/SECRET_KEY"
+  name                    = "${local.secret_prefix}/SECRET_KEY-${local.resource_suffix}"
   description             = "FastAPI JWT signing secret"
-  recovery_window_in_days = 7
+  recovery_window_in_days = 0
 
   tags = {
-    Name = "aws-enterprise-cicd-app-secret-key"
+    Name = "aws-enterprise-cicd-app-secret-key-${local.resource_suffix}"
   }
 }
 
 resource "aws_secretsmanager_secret" "database_url" {
-  name                    = "aws-enterprise-cicd/app/DATABASE_URL"
+  name = "${local.secret_prefix}/DATABASE_URL-${local.resource_suffix}"
+
   description             = "FastAPI PostgreSQL connection URL"
-  recovery_window_in_days = 7
+  recovery_window_in_days = 0
 
   tags = {
-    Name = "aws-enterprise-cicd-app-database-url"
+    Name = "aws-enterprise-cicd-app-database-url-${local.resource_suffix}"
   }
 }
 
 resource "aws_secretsmanager_secret" "first_superuser" {
-  name                    = "aws-enterprise-cicd/app/FIRST_SUPERUSER"
+  name                    = "${local.secret_prefix}/FIRST_SUPERUSER-${local.resource_suffix}"
   description             = "Initial FastAPI administrator email"
-  recovery_window_in_days = 7
+  recovery_window_in_days = 0
 
   tags = {
-    Name = "aws-enterprise-cicd-app-first-superuser"
+    Name = "aws-enterprise-cicd-app-first-superuser-${local.resource_suffix}"
   }
 }
 
 resource "aws_secretsmanager_secret" "first_superuser_password" {
-  name                    = "aws-enterprise-cicd/app/FIRST_SUPERUSER_PASSWORD"
+  name                    = "${local.secret_prefix}/FIRST_SUPERUSER_PASSWORD-${local.resource_suffix}"
   description             = "Initial FastAPI administrator password"
-  recovery_window_in_days = 7
+  recovery_window_in_days = 0
 
   tags = {
-    Name = "aws-enterprise-cicd-app-first-superuser-password"
+    Name = "aws-enterprise-cicd-app-first-superuser-password-${local.resource_suffix}"
   }
 }
 
@@ -47,9 +50,11 @@ resource "aws_iam_role_policy" "ecs_secrets" {
 
     Statement = [{
       Effect = "Allow"
+
       Action = [
         "secretsmanager:GetSecretValue"
       ]
+
       Resource = [
         aws_secretsmanager_secret.secret_key.arn,
         aws_secretsmanager_secret.database_url.arn,
@@ -60,31 +65,7 @@ resource "aws_iam_role_policy" "ecs_secrets" {
   })
 }
 
-resource "aws_iam_role_policy" "codebuild_database_secrets" {
-  name = "AWS-CICD-CodeBuild-Database-Secrets"
-  role = aws_iam_role.codebuild.id
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "secretsmanager:GetSecretValue"
-        ]
-        Resource = aws_db_instance.postgres.master_user_secret[0].secret_arn
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "secretsmanager:PutSecretValue"
-        ]
-        Resource = aws_secretsmanager_secret.database_url.arn
-      }
-    ]
-  })
-}
 
 resource "random_password" "secret_key" {
   length  = 64
@@ -115,11 +96,16 @@ resource "aws_secretsmanager_secret_version" "first_superuser_password" {
 data "aws_secretsmanager_secret_version" "rds_master" {
   secret_id = aws_db_instance.postgres.master_user_secret[0].secret_arn
 
-  depends_on = [aws_db_instance.postgres]
+  depends_on = [
+    aws_db_instance.postgres
+  ]
 }
 
 locals {
-  rds_master_credentials = jsondecode(data.aws_secretsmanager_secret_version.rds_master.secret_string)
+  rds_master_credentials = jsondecode(
+    data.aws_secretsmanager_secret_version.rds_master.secret_string
+  )
+
   bootstrap_database_url = format(
     "postgresql://%s:%s@%s:%d/%s",
     urlencode(local.rds_master_credentials.username),
@@ -134,5 +120,7 @@ resource "aws_secretsmanager_secret_version" "database_url" {
   secret_id     = aws_secretsmanager_secret.database_url.id
   secret_string = local.bootstrap_database_url
 
-  depends_on = [aws_db_instance.postgres]
+  depends_on = [
+    aws_db_instance.postgres
+  ]
 }

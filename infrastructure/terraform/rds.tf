@@ -1,14 +1,16 @@
+# infrastructure/terraform/rds.tf
+
 resource "aws_db_subnet_group" "postgres" {
-  name       = "aws-enterprise-cicd-postgres"
-  subnet_ids = aws_subnet.private[*].id
+  name       = local.rds_subnet_group
+  subnet_ids = [for subnet in aws_subnet.private : subnet.id]
 
   tags = {
-    Name = "aws-enterprise-cicd-postgres"
+    Name = local.rds_subnet_group
   }
 }
 
 resource "aws_security_group" "postgres" {
-  name        = "aws-enterprise-cicd-postgres"
+  name        = "aws-enterprise-cicd-postgres-${local.resource_suffix}"
   description = "Allow PostgreSQL only from ECS tasks"
   vpc_id      = aws_vpc.main.id
 
@@ -29,12 +31,12 @@ resource "aws_security_group" "postgres" {
   }
 
   tags = {
-    Name = "aws-enterprise-cicd-postgres"
+    Name = "aws-enterprise-cicd-postgres-${local.resource_suffix}"
   }
 }
 
 resource "aws_db_instance" "postgres" {
-  identifier = "aws-enterprise-cicd-postgres"
+  identifier = local.rds_identifier
 
   engine         = "postgres"
   engine_version = "17"
@@ -62,10 +64,18 @@ resource "aws_db_instance" "postgres" {
 
   deletion_protection = true
   skip_final_snapshot = false
+  apply_immediately   = false
 
-  apply_immediately = false
+  lifecycle {
+    prevent_destroy = false
+  }
 
   tags = {
-    Name = "aws-enterprise-cicd-postgres"
+    Name = local.rds_identifier
   }
+
+  depends_on = [
+    aws_db_subnet_group.postgres,
+    aws_security_group.postgres,
+  ]
 }

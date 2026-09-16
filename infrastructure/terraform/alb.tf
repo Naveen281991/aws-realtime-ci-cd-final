@@ -77,6 +77,12 @@ resource "aws_ecs_service" "application" {
     aws_lb_listener.application
   ]
 
+  lifecycle {
+    ignore_changes = [
+      task_definition
+    ]
+  }
+
   tags = {
     Name = "aws-enterprise-cicd-app-service"
   }

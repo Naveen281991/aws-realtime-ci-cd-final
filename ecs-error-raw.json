@@ -1,0 +1,861 @@
+{
+    "events": [
+        {
+            "timestamp": 1788853706621,
+            "message": " ⚡️ Starting FastAPI in production mode",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853706625,
+            "message": " ",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853706626,
+            "message": " 🐍 Using import string: app.main:app",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853706626,
+            "message": " ",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853706627,
+            "message": " 🌐 Server started at http://0.0.0.0:8000",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853706627,
+            "message": "    Documentation at http://0.0.0.0:8000/docs",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853706627,
+            "message": " ",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853706628,
+            "message": "  Logs:",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853706628,
+            "message": " ",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "╭───────────────────── Traceback (most recent call last) ──────────────────────╮",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /app/.venv/lib/python3.14/site-packages/fastapi_cli/cli.py:521 in run        │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   518 │                                                                      │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   519 │   Otherwise, it uses the first [bold]FastAPI[/bold] app found in the │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│       imported module or package.                                            │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   520 │   \"\"\"                                                                │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱ 521 │   _run(                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   522 │   │   path=path,                                                     │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   523 │   │   host=host,                                                     │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   524 │   │   port=port,                                                     │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /app/.venv/lib/python3.14/site-packages/fastapi_cli/cli.py:284 in _run       │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   281 │   │   │   {\"log_config\": get_uvicorn_log_config()} if                │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│       should_use_rich_logs() else {}                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   282 │   │   )                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   283 │   │                                                                  │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱ 284 │   │   uvicorn.run(                                                   │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   285 │   │   │   app=import_string,                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   286 │   │   │   host=host,                                                 │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   287 │   │   │   port=port,                                                 │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /app/.venv/lib/python3.14/site-packages/uvicorn/main.py:609 in run           │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   606 │   │   logger.warning(\"You must pass the application as an import     │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│       string to enable 'reload' or 'workers'.\")                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   607 │   │   sys.exit(1)                                                    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   608 │                                                                      │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱ 609 │   config.load_app()                                                  │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   610 │   server = Server(config=config)                                     │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   611 │                                                                      │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   612 │   try:                                                               │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /app/.venv/lib/python3.14/site-packages/uvicorn/config.py:415 in load_app    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   412 │   def load_app(self) -> Any:                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   413 │   │   \"\"\"Import the app and return it. Exits on failure.\"\"\"          │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   414 │   │   try:                                                           │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱ 415 │   │   │   return import_from_string(self.app)                        │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   416 │   │   except ImportFromStringError as exc:                           │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   417 │   │   │   logger.error(\"Error loading ASGI app. %s\" % exc)           │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   418 │   │   │   sys.exit(1)                                                │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /app/.venv/lib/python3.14/site-packages/uvicorn/importer.py:19 in            │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ import_from_string                                                           │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   16 │   │   raise                                                           │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│      ImportFromStringError(message.format(import_str=import_str))            │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   17 │                                                                       │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   18 │   try:                                                                │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱ 19 │   │   module = importlib.import_module(module_str)                    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   20 │   except ModuleNotFoundError as exc:                                  │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   21 │   │   if exc.name != module_str:                                      │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   22 │   │   │   raise exc from None                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /usr/local/lib/python3.14/importlib/__init__.py:88 in import_module          │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    85 │   │   │   if character != '.':                                       │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    86 │   │   │   │   break                                                  │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    87 │   │   │   level += 1                                                 │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱  88 │   return _bootstrap._gcd_import(name[level:], package, level)        │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    89                                                                        │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    90                                                                        │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    91 _RELOADING = {}                                                        │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ in _gcd_import:1406                                                          │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ in _find_and_load:1371                                                       │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ in _find_and_load_unlocked:1342                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ in _load_unlocked:938                                                        │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ in exec_module:759                                                           │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ in _call_with_frames_removed:491                                             │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /app/backend/app/main.py:8 in <module>                                       │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    5 from fastapi.routing import APIRoute                                    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    6 from starlette.middleware.cors import CORSMiddleware                    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    7                                                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱  8 from app.api.main import api_router                                     │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    9 from app.core.config import settings                                    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   10                                                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   11 FRONTEND_DIR = Path(__file__).resolve().parents[2] / \"frontend\"         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /app/backend/app/api/main.py:3 in <module>                                   │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    1 from fastapi import APIRouter                                           │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    2                                                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱  3 from app.api.routes import items, login, private, users, utils          │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    4 from app.core.config import settings                                    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    5                                                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    6 api_router = APIRouter()                                                │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /app/backend/app/api/routes/items.py:7 in <module>                           │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│     4 from fastapi import APIRouter, HTTPException                           │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│     5 from sqlmodel import col, func, select                                 │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│     6                                                                        │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱   7 from app.api.deps import CurrentUser, SessionDep                       │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│     8 from app.models import Item, ItemCreate, ItemPublic, ItemsPublic,      │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│       ItemUpdate, Message                                                    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│     9                                                                        │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    10 router = APIRouter(prefix=\"/items\", tags=[\"items\"])                    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /app/backend/app/api/deps.py:11 in <module>                                  │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    8 from pydantic import ValidationError                                    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    9 from sqlmodel import Session                                            │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   10                                                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱ 11 from app.core import security                                           │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   12 from app.core.config import settings                                    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   13 from app.core.db import engine                                          │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   14 from app.models import TokenPayload, User                               │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /app/backend/app/core/security.py:9 in <module>                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    6 from pwdlib.hashers.argon2 import Argon2Hasher                          │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    7 from pwdlib.hashers.bcrypt import BcryptHasher                          │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    8                                                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱  9 from app.core.config import settings                                    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   10                                                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   11 password_hash = PasswordHash(                                           │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   12 │   (                                                                   │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /app/backend/app/core/config.py:91 in <module>                               │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   88 │   │   return self                                                     │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   89                                                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   90                                                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱ 91 settings = Settings()  # type: ignore                                   │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   92                                                                         │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /app/.venv/lib/python3.14/site-packages/pydantic_settings/main.py:247 in     │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ __init__                                                                     │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   244 │   │   │   )                                                          │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   245 │   │   )                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   246 │   │                                                                  │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱ 247 │   │                                                                  │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│       super().__init__(**__pydantic_self__.__class__._settings_build_values( │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│       sources, init_kwargs))                                                 │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   248 │                                                                      │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   249 │   @classmethod                                                       │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│   250 │   def settings_customise_sources(                                    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ /app/.venv/lib/python3.14/site-packages/pydantic/main.py:263 in __init__     │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│                                                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    260 │   │   \"\"\"                                                           │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    261 │   │   # `__tracebackhide__` tells pytest and some other tools to    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│        omit this function from tracebacks                                    │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    262 │   │   __tracebackhide__ = True                                      │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│ ❱  263 │   │   validated_self =                                              │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│        self.__pydantic_validator__.validate_python(data, self_instance=self) │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    264 │   │   if self is not validated_self:                                │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    265 │   │   │   warnings.warn(                                            │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│    266 │   │   │   │   'A custom validator is returning a value other than   │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "│        `self`.\\n'                                                            │",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "╰──────────────────────────────────────────────────────────────────────────────╯",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "ValidationError: 1 validation error for Settings",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "FASTAPI_ENV",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "  Input should be 'development' [type=literal_error, input_value='production', ",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "input_type=str]",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "    For further information visit ",
+            "ingestionTime": 1788853711001
+        },
+        {
+            "timestamp": 1788853709119,
+            "message": "https://errors.pydantic.dev/2.13/v/literal_error",
+            "ingestionTime": 1788853711001
+        }
+    ],
+    "nextForwardToken": "f/39892770764509235237605137180591898184796907766422306986/s",
+    "nextBackwardToken": "b/39892770708801973731675640573035673939721300724483227648/s"
+}

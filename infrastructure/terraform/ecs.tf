@@ -149,3 +149,33 @@ resource "aws_ecs_task_definition" "application" {
     Name = "aws-enterprise-cicd-app-task"
   }
 }
+
+
+# ecs.tf
+
+resource "aws_iam_role_policy" "ecs_task_secrets" {
+  name = "AWS-CICD-ECS-TaskExecution-Secrets"
+  role = aws_iam_role.ecs_task_execution.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Sid    = "ReadApplicationSecrets"
+        Effect = "Allow"
+
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+
+        Resource = [
+          aws_secretsmanager_secret.secret_key.arn,
+          aws_secretsmanager_secret.database_url.arn,
+          aws_secretsmanager_secret.first_superuser.arn,
+          aws_secretsmanager_secret.first_superuser_password.arn
+        ]
+      }
+    ]
+  })
+}

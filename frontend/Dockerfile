@@ -1,3 +1,5 @@
+# Dockerfile
+
 FROM oven/bun:1 AS frontend-build
 
 WORKDIR /app
@@ -37,9 +39,7 @@ COPY backend/scripts /app/backend/scripts
 COPY backend/pyproject.toml backend/alembic.ini /app/backend/
 COPY backend/app /app/backend/app
 
-RUN mkdir -p /app/backend/app/frontend
-
-COPY --from=frontend-build /app/frontend/dist /app/backend/app/frontend
+COPY --from=frontend-build /app/frontend/dist /app/frontend
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
@@ -49,12 +49,3 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 WORKDIR /app/backend
 
 CMD ["fastapi", "run", "--workers", "4"]
-
-COPY ./backend/app /app/backend/app
-
-COPY --from=frontend-build /app/frontend/dist /app/frontend
-
-RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --package app
